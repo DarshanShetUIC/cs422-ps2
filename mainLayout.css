@@ -4,8 +4,40 @@
 
 /* REMOVE ME - dashed lines and height for debugging */
 #mainColumn {
-  outline: 1px dashed orange;
+  outline: 1px dashed blue;
   height: 200px;
+  padding: 10px;
+}
+
+/* https://www.w3schools.com/Bootstrap/bootstrap_grid_basic.asp */
+/* https://www.w3schools.com/csS/css3_buttons.asp */
+
+.btn{
+	transition-duration: 0.2s;
+}
+
+.btn:hover {
+  background-color: #597859; /* Green */
+  color: white;
+}
+
+/* https://stackoverflow.com/questions/9707021/how-do-i-auto-hide-placeholder-text-upon-focus-using-css-or-jquery */
+input:focus::placeholder {
+  color: transparent;
+}
+
+#firstColumn{
+	text-align:center;
+	padding: 10px;
+}
+
+#myTitleH1{
+	color: White;
+}
+
+/* https://wallpapercave.com/wp/wp7503695.jpg */
+#gamePage{
+	background-image: url("wp7503695.jpg");
 }
 
 /* Your css code here! */

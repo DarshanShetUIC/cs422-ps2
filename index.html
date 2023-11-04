@@ -82,7 +82,22 @@ rules = new Rules(board);
 // runs at the end of start-up when the page has finished loading.
 $(document).ready(function()
 {
-  // Your code here.
+	$('#myGameTable').empty();
+	for(var i = 0; i < DEFAULT_BOARD_SIZE; i++){
+		var row = document.createElement('tr');
+		$('#gameBoard').append(row);
+		for(var j = 0; j < DEFAULT_BOARD_SIZE; j++){
+			var col = document.createElement('td');
+		row.append(col);
+		}
+	}
+	board.clear();
+	rules.prepareNewGame();
+	$("#upArrowBtn").attr("disabled", true);
+	$("#downArrowBtn").attr("disabled", true);
+	$("#leftArrowBtn").attr("disabled", true);
+	$("#rightArrowBtn").attr("disabled", true);
+	$("#crushBtn").attr("disabled", true);
 });
 
 
@@ -92,13 +107,55 @@ $(document).ready(function()
 // add a candy to the board
 $(board).on('add', function(e, info)
 {
-  // Your code here.
+	/*
+		CODE NEEDS TO BE REFACTORED!!!
+	*/
+	console.log("add triggered");
+	var div = document.createElement('div');
+	$(div).data("candy", info.candy);
+	$(div).addClass("candy-" + info.candy.toString());
+	$(div).attr("id", info.candy.id);
+
+	// convert id to position
+	var letter = String.fromCharCode(info.candy.col + 97);
+	var num = (info.candy.row + 1).toString();
+	var position = letter+num;
+	$(div).attr("position", position);
+	$(div).append(position);
+
+	// add candy to the table
+	var rowElem = $("#gameBoard").children()[info.candy.row];
+	var cellElem = $(rowElem).children()[info.candy.col];
+	cellElem.append(div);
 });
 
 // move a candy on the board
 $(board).on('move', function(e, info)
 {
-  // Your code here.
+	/*
+		CODE NEEDS TO BE REFACTORED!!!
+	*/
+	console.log("move triggered");
+	// remove the candy
+	var candy = document.getElementById(info.candy.id);
+	candy.parentNode.removeChild(candy);
+
+	var div = document.createElement('div');
+	$(div).data("candy", info.candy);
+	$(div).addClass("candy-" + info.candy.toString());
+	$(div).attr("id", info.candy.id);
+
+	// convert id to position
+	var letter = String.fromCharCode(info.candy.col + 97);
+	var num = (info.candy.row + 1).toString();
+	var position = letter+num;
+	$(div).attr("position", position);
+	$(div).append(position);
+
+	// add candy to the table
+	var rowElem = $("#gameBoard").children()[info.candy.row];
+	var cellElem = $(rowElem).children()[info.candy.col];
+	cellElem.append(div);
 });
 
 // remove a candy from the board
@@ -130,33 +187,62 @@ $(document).on('keydown', function(evt) {
 
 </head>
 
-<body>
+<body id="gamePage">
 
 <div class="container">
-  <div class="row">
-    <div class="col-md-4" id="firstColumn">
-      <div>
-      <!-- Column 1 Code Here -->
-      Column 1
-
-      </div>
-  </div>
-
-    <div class="col-md-4" id="mainColumn">
-
-      <!-- Column 2 Code Here -->
-      Column 2
-
-    </div>
-
-    <div class="col-md-4" id="lastColumn">
-
-      <!-- Column 3 Code Here -->
-      Column 3
-
-    </div>
-  </div> <!-- class="row" -->
-</div> <!-- class="container" -->
+	<div class="row">
+		<div class="col-md-4" id="firstColumn">
+		
+			<div class="container">
+				<h1 id="myTitleH1" style="padding: 10px;">Halo Crush</h1>
+				<input type="button" class="btn" id="myNewGameBtn" value="New Game"></input>
+			</div>
+			
+		</div>
+		<div class="col-md-4" id="mainColumn">
+			<table id="myGameTable"></table>
+		</div>
+		<div class="col-md-4" id="lastColumn" style="text-align:center;">
+			
+			<div class="container" style="padding: 10px;">
+				<div class="row">
+					<div class="col"></div>
+					<div id="moveTxtField" class="col"><input type="text" class="form-control" placeholder="Next move here..." style="width: 150px;text-align: center;"></input></div>
+					<div class="col"></div>
+				</div>
+			</div>
+			
+			<div class="container" style="padding: 10px;">
+				<div class="row">
+					<div class="col"></div>
+					<div class="col"><input type="button" class="btn" value="^" id="upArrowBtn"></input></div>
+					<div class="col"></div>
+				</div>
+				<div class="row">
+					<div class="col"></div>
+					<div class="col"><input type="button" class="btn" value="<" id="leftArrowBtn"></input></div>
+					<div class="col"></div>
+					<div class="col"><input type="button" class="btn" value=">" id="rightArrowBtn"></input></div>
+					<div class="col"></div>
+				</div>
+				<div class="row">
+					<div class="col"></div>
+					<div class="col"><input type="button" class="btn" value="v" id="downArrowBtn"></input></div>
+					<div class="col"></div>
+				</div>
+			</div>
+			
+			<div class="container" style="padding: 10px;">
+				<div class="row">
+					<div class="col"></div>
+					<div class="col"><input type="button" class="btn" value="Crush Once" id="crushBtn" style="width: 150px;text-align: center;"></input></div>
+					<div class="col"></div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</div>
 
 </body>
 
