@@ -1,7 +1,7 @@
 <!--
 CandyCrush
-Your Name:
-Collaborators:
+Your Name: Darshan Shet
+Collaborators: discussed the assignment with nobody
 -->
 <!DOCTYPE html>
 <html>
@@ -82,15 +82,79 @@ rules = new Rules(board);
 // runs at the end of start-up when the page has finished loading.
 $(document).ready(function()
 {
-	$('#myGameTable').empty();
-	for(var i = 0; i < DEFAULT_BOARD_SIZE; i++){
-		var row = document.createElement('tr');
-		$('#gameBoard').append(row);
-		for(var j = 0; j < DEFAULT_BOARD_SIZE; j++){
-			var col = document.createElement('td');
-		row.append(col);
-		}
-	}
+	$("#upArrowBtn").attr("disabled", true);
+	$("#downArrowBtn").attr("disabled", true);
+	$("#leftArrowBtn").attr("disabled", true);
+	$("#rightArrowBtn").attr("disabled", true);
+	$("#crushBtn").attr("disabled", true);
+	board.clear();
+	rules.prepareNewGame();
+	var audio = new Audio('halo.ogg');
+	document.body.addEventListener("mousemove", function () {
+    audio.play()
+	});
+});
+
+
+function toGridCode(row, col){
+	var letter = String.fromCharCode(col + 97);
+	var num = (row + 1).toString();
+	var position = letter+num;
+	return position;
+}
+
+/* Event Handlers */
+// access the candy object with info.candy
+
+// add a candy to the board
+$(board).on('add', function(e, info)
+{
+	//console.log("ADD() called");
+	var gridCode = toGridCode(info.candy.row, info.candy.col);
+	var div = $("<div></div>");
+	div.data("candyObj", info.candy);
+	div.addClass(info.candy.toString());
+	div.attr("id", info.candy.id);
+	div.text(gridCode);
+	$("#"+gridCode).append(div);
+});
+
+// remove a candy from the board
+$(board).on('remove', function(e, info)
+{
+	//console.log("REMOVE() called");
+	$("#"+info.candy.id).remove();
+});
+
+// move a candy on the board
+$(board).on('move', function(e, info)
+{
+	// Call REMOVE()
+	//console.log("MOVE() called");
+	$("#"+info.candy.id).remove();
+	
+	// Call ADD()
+	var gridCode = toGridCode(info.candy.row, info.candy.col);
+	var div = $("<div></div>");
+	div.data("candyObj", info.candy);
+	div.addClass(info.candy.toString());
+	div.attr("id", info.candy.id);
+	div.text(gridCode);
+	$("#"+gridCode).append(div);
+});
+
+
+
+// move a candy on the board
+$(board).on('scoreUpdate', function(e, info)
+{
+  // Your code here. To be implemented in pset 2.
+});
+
+// Button Events
+$(document).on('click', "#myNewGameBtn", function(evt)
+{
+	//console.log("New Game button clicked");
 	board.clear();
 	rules.prepareNewGame();
 	$("#upArrowBtn").attr("disabled", true);
@@ -100,86 +164,126 @@ $(document).ready(function()
 	$("#crushBtn").attr("disabled", true);
 });
 
-
-/* Event Handlers */
-// access the candy object with info.candy
-
-// add a candy to the board
-$(board).on('add', function(e, info)
+$(document).on('click', "#crushBtn", function(evt)
 {
-	/*
-		CODE NEEDS TO BE REFACTORED!!!
-	*/
-	console.log("add triggered");
-	var div = document.createElement('div');
-	$(div).data("candy", info.candy);
-	$(div).addClass("candy-" + info.candy.toString());
-	$(div).attr("id", info.candy.id);
-
-	// convert id to position
-	var letter = String.fromCharCode(info.candy.col + 97);
-	var num = (info.candy.row + 1).toString();
-	var position = letter+num;
-	$(div).attr("position", position);
-	$(div).append(position);
-
-	// add candy to the table
-	var rowElem = $("#gameBoard").children()[info.candy.row];
-	var cellElem = $(rowElem).children()[info.candy.col];
-	cellElem.append(div);
+	//console.log("Crush button clicked");
+	rules.removeCrushes(rules.getCandyCrushes());
+	rules.moveCandiesDown();
+	setTimeout(function(){
+		rules.moveCandiesDown();
+		if (rules.getCandyCrushes().length != 0){
+			//console.log("More candies can be crushed...");
+			$("#crushBtn").attr("disabled", false);
+		}
+		else {
+			//console.log("No more candies can be crushed...");
+			$("#crushBtn").attr("disabled", true);
+		}
+	}, 500);
 });
 
-// move a candy on the board
-$(board).on('move', function(e, info)
+$(document).on('click', "#upArrowBtn", function(evt)
 {
-	/*
-		CODE NEEDS TO BE REFACTORED!!!
-	*/
-	console.log("move triggered");
-	// remove the candy
-	var candy = document.getElementById(info.candy.id);
-	candy.parentNode.removeChild(candy);
-
-	var div = document.createElement('div');
-	$(div).data("candy", info.candy);
-	$(div).addClass("candy-" + info.candy.toString());
-	$(div).attr("id", info.candy.id);
-
-	// convert id to position
-	var letter = String.fromCharCode(info.candy.col + 97);
-	var num = (info.candy.row + 1).toString();
-	var position = letter+num;
-	$(div).attr("position", position);
-	$(div).append(position);
-
-	// add candy to the table
-	var rowElem = $("#gameBoard").children()[info.candy.row];
-	var cellElem = $(rowElem).children()[info.candy.col];
-	cellElem.append(div);
+	//console.log("Up button clicked");
+	var txtInput = $("#moveTxtField").val();
+	var tagFound = document.getElementById(txtInput);
+	var candyFound = tagFound.children[0];
+	var candyObj = $(candyFound).data("candyObj");
+	$("#moveTxtField").val("");
+	var candySwap = board.getCandyInDirection(candyObj, "up");
+	board.flipCandies(candyObj, candySwap);
+	$("#upArrowBtn").attr("disabled", true);
+	$("#downArrowBtn").attr("disabled", true);
+	$("#leftArrowBtn").attr("disabled", true);
+	$("#rightArrowBtn").attr("disabled", true);
+	$("#crushBtn").attr("disabled", false);
 });
 
-// remove a candy from the board
-$(board).on('remove', function(e, info)
+$(document).on('click', "#downArrowBtn", function(evt)
 {
-  // Your code here.
+	//console.log("Down button clicked");
+	var txtInput = $("#moveTxtField").val();
+	var tagFound = document.getElementById(txtInput);
+	var candyFound = tagFound.children[0];
+	var candyObj = $(candyFound).data("candyObj");
+	$("#moveTxtField").val("");
+	var candySwap = board.getCandyInDirection(candyObj, "down");
+	board.flipCandies(candyObj, candySwap);
+	$("#upArrowBtn").attr("disabled", true);
+	$("#downArrowBtn").attr("disabled", true);
+	$("#leftArrowBtn").attr("disabled", true);
+	$("#rightArrowBtn").attr("disabled", true);
+	$("#crushBtn").attr("disabled", false);
 });
 
-// move a candy on the board
-$(board).on('scoreUpdate', function(e, info)
+$(document).on('click', "#leftArrowBtn", function(evt)
 {
-  // Your code here. To be implemented in pset 2.
+	//console.log("Left button clicked");
+	var txtInput = $("#moveTxtField").val();
+	var tagFound = document.getElementById(txtInput);
+	var candyFound = tagFound.children[0];
+	var candyObj = $(candyFound).data("candyObj");
+	$("#moveTxtField").val("");
+	var candySwap = board.getCandyInDirection(candyObj, "left");
+	board.flipCandies(candyObj, candySwap);
+	$("#upArrowBtn").attr("disabled", true);
+	$("#downArrowBtn").attr("disabled", true);
+	$("#leftArrowBtn").attr("disabled", true);
+	$("#rightArrowBtn").attr("disabled", true);
+	$("#crushBtn").attr("disabled", false);
 });
 
-// Button Events
-$(document).on('click', "#buttonIDhere", function(evt)
+$(document).on('click', "#rightArrowBtn", function(evt)
 {
-  // Your code here.
+	//console.log("Right button clicked");
+	var txtInput = $("#moveTxtField").val();
+	var tagFound = document.getElementById(txtInput);
+	var candyFound = tagFound.children[0];
+	var candyObj = $(candyFound).data("candyObj");
+	$("#moveTxtField").val("");
+	var candySwap = board.getCandyInDirection(candyObj, "right");
+	board.flipCandies(candyObj, candySwap);
+	$("#upArrowBtn").attr("disabled", true);
+	$("#downArrowBtn").attr("disabled", true);
+	$("#leftArrowBtn").attr("disabled", true);
+	$("#rightArrowBtn").attr("disabled", true);
+	$("#crushBtn").attr("disabled", false);
 });
 
 // keyboard events arrive here
 $(document).on('keydown', function(evt) {
   // Your code here.
 });
+
+// check valid of input from input text box
+function validateUserInput(){
+	$("#upArrowBtn").attr("disabled", true);
+	$("#downArrowBtn").attr("disabled", true);
+	$("#leftArrowBtn").attr("disabled", true);
+	$("#rightArrowBtn").attr("disabled", true);
+	$("#crushBtn").attr("disabled", true);
+	var txtInput = $("#moveTxtField").val();
+	var tagFound = document.getElementById(txtInput);
+	if (tagFound !== null){
+		var candyFound = tagFound.children[0];
+		var candyObj = $(candyFound).data("candyObj");
+		if(rules.isMoveTypeValid(candyObj, "up")){
+			$("#upArrowBtn").attr("disabled", false);
+		}
+		if(rules.isMoveTypeValid(candyObj, "down")){
+			$("#downArrowBtn").attr("disabled", false);
+		}
+		if(rules.isMoveTypeValid(candyObj, "left")){
+			$("#leftArrowBtn").attr("disabled", false);
+		}
+		if(rules.isMoveTypeValid(candyObj, "right")){
+			$("#rightArrowBtn").attr("disabled", false);
+		}
+	}
+	if (rules.getCandyCrushes().length != 0){
+		$("#crushBtn").attr("disabled", false);
+	}
+}
 
 
 </script>
@@ -188,6 +292,7 @@ $(document).on('keydown', function(evt) {
 </head>
 
 <body id="gamePage">
+
 
 <div class="container">
 	<div class="row">
@@ -200,14 +305,95 @@ $(document).on('keydown', function(evt) {
 			
 		</div>
 		<div class="col-md-4" id="mainColumn">
-			<table id="myGameTable"></table>
+			<table id="gameBoard">
+				<tr>
+					<td id="a1"></td>
+					<td id="b1"></td>
+					<td id="c1"></td>
+					<td id="d1"></td>
+					<td id="e1"></td>
+					<td id="f1"></td>
+					<td id="g1"></td>
+					<td id="h1"></td>
+				</tr>
+				<tr>
+					<td id="a2"></td>
+					<td id="b2"></td>
+					<td id="c2"></td>
+					<td id="d2"></td>
+					<td id="e2"></td>
+					<td id="f2"></td>
+					<td id="g2"></td>
+					<td id="h2"></td>
+				</tr>
+				<tr>
+					<td id="a3"></td>
+					<td id="b3"></td>
+					<td id="c3"></td>
+					<td id="d3"></td>
+					<td id="e3"></td>
+					<td id="f3"></td>
+					<td id="g3"></td>
+					<td id="h3"></td>
+				</tr>
+				<tr>
+					<td id="a4"></td>
+					<td id="b4"></td>
+					<td id="c4"></td>
+					<td id="d4"></td>
+					<td id="e4"></td>
+					<td id="f4"></td>
+					<td id="g4"></td>
+					<td id="h4"></td>
+				</tr>
+				<tr>
+					<td id="a5"></td>
+					<td id="b5"></td>
+					<td id="c5"></td>
+					<td id="d5"></td>
+					<td id="e5"></td>
+					<td id="f5"></td>
+					<td id="g5"></td>
+					<td id="h5"></td>
+				</tr>
+				<tr>
+					<td id="a6"></td>
+					<td id="b6"></td>
+					<td id="c6"></td>
+					<td id="d6"></td>
+					<td id="e6"></td>
+					<td id="f6"></td>
+					<td id="g6"></td>
+					<td id="h6"></td>
+				</tr>
+				<tr>
+					<td id="a7"></td>
+					<td id="b7"></td>
+					<td id="c7"></td>
+					<td id="d7"></td>
+					<td id="e7"></td>
+					<td id="f7"></td>
+					<td id="g7"></td>
+					<td id="h7"></td>
+				</tr>
+				<tr>
+					<td id="a8"></td>
+					<td id="b8"></td>
+					<td id="c8"></td>
+					<td id="d8"></td>
+					<td id="e8"></td>
+					<td id="f8"></td>
+					<td id="g8"></td>
+					<td id="h8"></td>
+				</tr>
+      		</table>
 		</div>
 		<div class="col-md-4" id="lastColumn" style="text-align:center;">
 			
 			<div class="container" style="padding: 10px;">
 				<div class="row">
 					<div class="col"></div>
-					<div id="moveTxtField" class="col"><input type="text" class="form-control" placeholder="Next move here..." style="width: 150px;text-align: center;"></input></div>
+					<div class="col"><input type="text" class="form-control" onkeyup="validateUserInput()" maxlength="2" placeholder="Enter move:" id="moveTxtField" style="width: 150px;text-align: center;"></input></div>
 					<div class="col"></div>
 				</div>
 			</div>
@@ -243,6 +429,9 @@ $(document).on('keydown', function(evt) {
 		</div>
 	</div>
 </div>
+
+
+
 
 </body>
 

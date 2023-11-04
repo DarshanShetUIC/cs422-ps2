@@ -2,15 +2,9 @@
  * Redistribution of original or derived work requires permission of course staff.
  */
 
-/* REMOVE ME - dashed lines and height for debugging */
-#mainColumn {
-  outline: 1px dashed blue;
-  height: 200px;
-  padding: 10px;
-}
-
 /* https://www.w3schools.com/Bootstrap/bootstrap_grid_basic.asp */
 /* https://www.w3schools.com/csS/css3_buttons.asp */
+/* https://stackoverflow.com/questions/4191386/jquery-how-to-find-an-element-based-on-a-data-attribute-value */
 
 .btn{
 	transition-duration: 0.2s;
@@ -28,11 +22,16 @@ input:focus::placeholder {
 
 #firstColumn{
 	text-align:center;
+	padding: 20px;
+}
+
+#lastColumn{
 	padding: 10px;
 }
 
 #myTitleH1{
 	color: White;
+	font-weight: bold;
 }
 
 /* https://wallpapercave.com/wp/wp7503695.jpg */
@@ -40,4 +39,76 @@ input:focus::placeholder {
 	background-image: url("wp7503695.jpg");
 }
 
+#mainColumn {
+	padding: 20px;
+}
+
+table{
+	margin: auto;
+	width: 320px;
+	height: 320px;
+}
+
+tr, td {
+	border-collapse: collapse;
+	width: 40px;
+	height: 40px;
+	text-align: center;
+	line-height: 40px;
+}
+
+.red {
+	color: white;
+	font-size: 20px;
+	background-color: red;
+	/*background-image: url("graphics/red-candy.png");*/
+	opacity: 0.7;
+	height: 100%;
+	width: 100%;
+}
+
+.green {
+	color: white;
+	font-size: 20px;
+	background-color: green;
+	opacity: 0.7;
+	height: 100%;
+	width: 100%;
+}
+
+.blue {
+	color: white;
+	font-size: 20px;
+	background-color: blue;
+	opacity: 0.7;
+	height: 100%;
+	width: 100%;
+}
+
+.orange {
+	color: white;
+	font-size: 20px;
+	background-color: orange;
+	opacity: 0.7;
+	height: 100%;
+	width: 100%;
+}
+
+.yellow {
+	color: gray;
+	background-color: yellow;
+	opacity: 0.7;
+	height: 100%;
+	width: 100%;
+	font-size: 20px;
+}
+
+.purple {
+	color: white;
+	font-size: 20px;
+	background-color: purple;
+	height: 100%;
+	width: 100%;
+	opacity: 0.7;
+}
 /* Your css code here! */
